@@ -32,12 +32,12 @@ int hanoiNumber(int n){
 }
 
 int main(){
-	int numberOfPlates = 4;
+	int numberOfPlates = 5;
 	char pillarA = 'a';
 	char pillarB = 'b';
 	char pillarC = 'c';
-	hanoi(numberOfPlates, pillarA, pillarB, pillarC);
-	printf("共移动盘子%d次\n", hanoiNumber(4));
+	hanoi(numberOfPlates, pillarA, pillarC, pillarB);
+	printf("共移动盘子%d次\n", hanoiNumber(5));
 	system("pause");
 	return 0;
 }
