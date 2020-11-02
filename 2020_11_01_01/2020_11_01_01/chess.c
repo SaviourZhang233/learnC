@@ -43,17 +43,9 @@ void printBoard(char chessBoard[MAX_ROW][MAX_COLUMN]) {
 	}
 }
 
-////打印棋盘
-//void printboard(char board[max_row][max_column]){
-//	for (int row = 0; row < max_row; row++){
-//		for (int col = 0; col < max_column;col++){
-//			printf("%c", board[row][col]);
-//		}
-//		printf("\n");
-//	}
-//}
 
-//玩家落子,全场棋子数+1
+
+//玩家落子
 void playerDo(char board[MAX_ROW][MAX_COLUMN], int* numberOfPieces){
 	int row = 0;
 	int col = 0;
@@ -73,10 +65,11 @@ void playerDo(char board[MAX_ROW][MAX_COLUMN], int* numberOfPieces){
 		}
 	}
 	board[row][col] = 'x';
-	*numberOfPieces++;
+	*numberOfPieces = *numberOfPieces + 1;
+	printf("现在落子%d颗\n", *numberOfPieces);
 }
 
-//电脑落子,全场棋子数+1
+//电脑落子
 void computerDo(char board[MAX_ROW][MAX_COLUMN], int* numberOfPieces){
 	printf("电脑落子\n");
 	int row = 0;
@@ -90,49 +83,58 @@ void computerDo(char board[MAX_ROW][MAX_COLUMN], int* numberOfPieces){
 		}
 	}
 	board[row][col] = 'o';
-	*numberOfPieces++;
+	*numberOfPieces = *numberOfPieces + 1;
 }
 
 //判断棋盘是否下满，1表示下满，0表示未下满
-int isFull(int numberOfPieces){
+int isfull(int numberOfPieces){
 	if (numberOfPieces == 9)
 		return 1;
 	else
 		return 0;
 }
 
-//判断胜负，返回值为'x'玩家赢，返回值为'o'电脑赢，返回值为'*'平手
-char whoIsWiner(char board[MAX_ROW][MAX_COLUMN]){
+//判断胜负，返回值为'x'玩家赢，返回值为'o'电脑赢，返回值为'*'平手,返回值为' '继续
+char whoIsWiner(char board[MAX_ROW][MAX_COLUMN],int numberOfPieces){
 	//判断所有行
 	for (int row = 0; row < MAX_ROW; row++){
-		if (board[row][0] == board[row][1] ||
+		if (board[row][0] != ' '&&
+			board[row][0] == board[row][1] &&
 			board[row][1] == board[row][2]){
 			return board[row][0];
 		}
 	}
 	//判断所有列
 	for (int col = 0; col < MAX_COLUMN; col++){
-		if (board[0][col] == board[1][col] ||
+		if (board[0][col] != ' '&&
+			board[0][col] == board[1][col] &&
 			board[1][col] == board[2][col]){
 			return board[0][col];
 		}
 	}
 	//判断所有对角线
-	if (board[1][1] == board[0][0] ||
+	if (board[1][1] != ' '&&
+		board[1][1] == board[0][0] &&
 		board[2][2] == board[0][0]){
 		return board[0][0];
 	}
-	if (board[0][2] == board[1][1] ||
+	if (board[1][1] != ' '&&
+		board[0][2] == board[1][1] &&
 		board[1][1] == board[2][0]){
 		return board[1][1];
 	}
+	//判断棋盘是否下满
+	if (isfull(numberOfPieces) == 0){
+		return ' ';
+	}
+
 	return '*';
 }
 
 void game(){
 	char board[MAX_ROW][MAX_COLUMN];
-	//char winer = '*';
-	//棋盘上棋子的个数，游戏刚开始的时候棋盘上棋子的个数为0
+	char winer = ' ';
+	////棋盘上棋子的个数，游戏刚开始的时候棋盘上棋子的个数为0
 	int numberOfPieces = 0;
 	printf("游戏开始\n");
 	//1.初始化棋盘
@@ -144,42 +146,60 @@ void game(){
 		playerDo(board, &numberOfPieces);
 		//4.打印棋盘
 		printBoard(board);
-		//5.判断棋盘是否下满,如果下满了，判断胜负
-		if (isFull(numberOfPieces) == 1){
-			if (whoIsWiner(board) == 'o'){//电脑胜
-				printf("你输了\n");
-				return;
-			}
-			if (whoIsWiner(board) == 'x'){//玩家胜
-				printf("你赢了\n");
-				return;
-			}
-			if (whoIsWiner(board) == '*'){//平手
-				printf("你和电脑势均力敌\n");
-				return;
-			}
+		//5.判断胜负
+		//if (isFull(numberOfPieces) == 1){
+		//	if (whoIsWiner(board) == 'o'){//电脑胜
+		//		printf("你输了\n");
+		//		return;
+		//	}
+		//	if (whoIsWiner(board) == 'x'){//玩家胜
+		//		printf("你赢了\n");
+		//		return;
+		//	}
+		//	if (whoIsWiner(board) == '*'){//平手
+		//		printf("你和电脑势均力敌\n");
+		//		return;
+		//	}
+		//}
+		winer = whoIsWiner(board, numberOfPieces);
+		if (winer != ' '){
+			break;
 		}
 		//6.电脑随机落子，电脑的子用o表示
 		computerDo(board, &numberOfPieces);
 		//7.打印棋盘
 		printBoard(board);
-		//8.判断棋盘是否下满,如果下满了，判断胜负
-		if (isFull(numberOfPieces) == 1){
-			if (whoIsWiner(board) == 'o'){//电脑胜
-				printf("你输了\n");
-				return;
-			}
-			if (whoIsWiner(board) == 'x'){//玩家胜
-				printf("你赢了\n");
-				return;
-			}
-			if (whoIsWiner(board) == '*'){//平手
-				printf("你和电脑势均力敌\n");
-				return;
-			}
+		//8.判断胜负
+		winer = whoIsWiner(board, numberOfPieces);
+		if (winer != ' '){
+			break;
 		}
+		//if (isFull(numberOfPieces) == 1){
+		//	if (whoIsWiner(board) == 'o'){//电脑胜
+		//		printf("你输了\n");
+		//		return;
+		//	}
+		//	if (whoIsWiner(board) == 'x'){//玩家胜
+		//		printf("你赢了\n");
+		//		return;
+		//	}
+		//	if (whoIsWiner(board) == '*'){//平手
+		//		printf("你和电脑势均力敌\n");
+		//		return;
+		//	}
+		//}
+	}
+	if (winer == 'x'){
+		printf("你赢了\n");
+	}
+	if (winer == 'o'){
+		printf("你输了\n");
+	}
+	if (winer == '*'){
+		printf("平手\n");
 	}
 }
+
 int main(){
 	int chioce;
 	srand((unsigned int)time(0));
